@@ -33,16 +33,3 @@ Use these files in this order:
 
 - `reference/data_dictionary.md`
   - Short glossary for the main workshop variables
-
-## Not ready yet
-
-- The student guide is still a **draft Markdown file**
-- There is not yet a polished **Jamovi `.omv` file**
-- There is not yet a polished **PDF handout**
-
-## Suggested release-ready targets later
-
-- `data/word-processing-teaching-dataset.omv`
-- `data/word-processing-teaching-dataset.csv`
-- `handout/word-processing-student-guide.pdf`
-- `slides/word-processing-workshop-slides.pdf`
