@@ -2,15 +2,6 @@
 
 Student download pack for the Psychology of Language word-processing workshop.
 
-## Start here
-
-Use these files in this order:
-
-1. Open `handout/word-processing-student-guide-DRAFT.md`
-2. Open `data/word-processing-teaching-dataset.csv` in Jamovi
-3. Use `reference/data_dictionary.md` if you need a reminder about the variables
-4. Use `slides/word-processing-workshop-slides.pdf` for the workshop slide deck
-
 ## Included files
 
 - `data/word-processing-teaching-dataset.csv`
@@ -26,10 +17,8 @@ Use these files in this order:
   - Optional extension file rather than the main live workshop dataset
 
 - `handout/word-processing-student-guide-DRAFT.md`
-  - Current draft of the student guide
 
 - `slides/word-processing-workshop-slides.pdf`
-  - Current PDF of the workshop slides
 
 - `reference/data_dictionary.md`
   - Short glossary for the main workshop variables
