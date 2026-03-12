@@ -9,7 +9,7 @@ Use these files in this order:
 1. Open `handout/word-processing-student-guide-DRAFT.md`
 2. Open `data/word-processing-teaching-dataset.csv` in Jamovi
 3. Use `reference/data_dictionary.md` if you need a reminder about the variables
-4. Use `slides/word-processing-workshop-slides-DRAFT.pdf` as a draft slide copy if needed
+4. Use `slides/word-processing-workshop-slides.pdf` for the workshop slide deck
 
 ## Included files
 
@@ -28,8 +28,8 @@ Use these files in this order:
 - `handout/word-processing-student-guide-DRAFT.md`
   - Current draft of the student guide
 
-- `slides/word-processing-workshop-slides-DRAFT.pdf`
-  - Current draft PDF of the workshop slides
+- `slides/word-processing-workshop-slides.pdf`
+  - Current PDF of the workshop slides
 
 - `reference/data_dictionary.md`
   - Short glossary for the main workshop variables
@@ -37,7 +37,6 @@ Use these files in this order:
 ## Not ready yet
 
 - The student guide is still a **draft Markdown file**
-- The slides are still a **draft PDF**
 - There is not yet a polished **Jamovi `.omv` file**
 - There is not yet a polished **PDF handout**
 
