@@ -10,8 +10,9 @@ Student download pack for the Psychology of Language word-processing workshop.
   - Additional columns such as `mean_accuracy`, `concreteness`, and `contextual_diversity` are also present
 
 - `data/word-processing-trial-level-data.csv`
-  - Trial-level lexical decision dataset
-  - Optional extension file rather than the main workshop dataset
+  - Trial-level lexical decision dataset, with one row per trial rather than one row per word
+  - Includes response-level fields such as `Sub_ID`, `Trial`, `Type`, `D_RT`, `D_Word`, `Outlier`, and `D_Zscore`
+  - Useful for showing where the summary teaching dataset comes from and for item- or participant-level extensions
 
 - `data/data_dictionary.md`
   - Short glossary for the main workshop variables
