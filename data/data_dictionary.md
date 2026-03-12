@@ -34,4 +34,9 @@ Key fields:
 
 - `mean_accuracy`: average accuracy for the item
 - `concreteness`: concreteness rating
-- `morph_family_size`: morphological family size
+- `contextual_diversity`: contextual diversity score
+- `OLD20F`: frequency-informed orthographic neighbourhood metric
+- `orthographic_neighbourhood_n`: orthographic neighbourhood size
+- `mean_D_Zscore`: mean z-scored response time
+- `n_rows`: number of rows in the teaching dataset
+- `n_subjects`: number of participants contributing to the item

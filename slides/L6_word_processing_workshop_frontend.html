@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>What predicts lexical decision speed?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --title-size: clamp(1.55rem, 3.8vw, 3.2rem);
+      --body-size: clamp(0.84rem, 1.12vw, 1.02rem);
+      --small-size: clamp(0.66rem, 0.85vw, 0.82rem);
+      --stage-width: min(75vw, 960px);
+      --stage-height: min(82vh, 730px);
+      --slide-padding: clamp(0.9rem, 2.8vw, 2rem);
+      --bg: #f5efe4;
+      --paper: rgba(255, 255, 255, 0.95);
+      --ink: #1f2730;
+      --muted: #56626e;
+      --line: rgba(31, 39, 48, 0.12);
+      --accent: #235f86;
+      --accent-soft: rgba(35, 95, 134, 0.1);
+      --accent-warm: #b77039;
+      --accent-green: #6d8e54;
+      --shadow: 0 28px 80px rgba(30, 39, 49, 0.11);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "IBM Plex Sans", sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(35, 95, 134, 0.09), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(183, 112, 57, 0.09), transparent 32%),
+        linear-gradient(180deg, #fcfaf6 0%, var(--bg) 100%);
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      scroll-snap-align: start;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--slide-padding);
+    }
+
+    .grain {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(31, 39, 48, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31, 39, 48, 0.025) 1px, transparent 1px);
+      background-size: 52px 52px;
+      opacity: 0.48;
+      pointer-events: none;
+    }
+
+    .slide-shell {
+      width: var(--stage-width);
+      min-height: min(var(--stage-height), 100%);
+      max-height: 100%;
+      overflow: hidden;
+      padding: clamp(1.15rem, 2.5vw, 1.9rem);
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(255,255,255,0.92));
+      border: 1px solid rgba(255,255,255,0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide-shell::before {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(31, 39, 48, 0.06);
+      pointer-events: none;
+    }
+
+    .stage {
+      width: min(100%, 820px);
+      max-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: clamp(0.65rem, 1.25vw, 1.05rem);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-stage,
+    .dataset-stage,
+    .model-stage,
+    .split-stage {
+      width: min(100%, 860px);
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: var(--small-size);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Fraunces", serif;
+      font-size: var(--title-size);
+      line-height: 1.05;
+      text-wrap: balance;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: clamp(0.98rem, 1.45vw, 1.18rem);
+      line-height: 1.2;
+      color: var(--ink);
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--body-size);
+      line-height: 1.42;
+      color: var(--muted);
+    }
+
+    code {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-weight: 600;
+    }
+
+    .hero-lead {
+      max-width: 38rem;
+      margin: 0 auto;
+      font-size: clamp(0.95rem, 1.4vw, 1.16rem);
+      color: var(--ink);
+    }
+
+    .goal-grid,
+    .card-grid,
+    .concept-grid,
+    .pair-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .mini-card,
+    .dataset-card,
+    .section-card,
+    .highlight-card {
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: rgba(245, 247, 249, 0.95);
+      border: 1px solid rgba(31, 39, 48, 0.08);
+      text-align: left;
+    }
+
+    .highlight-card {
+      background: rgba(35, 95, 134, 0.07);
+    }
+
+    .dataset-grid,
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+      text-align: left;
+    }
+
+    .dataset-card h3 {
+      margin-bottom: 0.28rem;
+    }
+
+    .dataset-footer {
+      display: grid;
+      gap: 0.4rem;
+    }
+
+    .dataset-note {
+      padding: 0.65rem 0.85rem;
+      border-radius: 16px;
+      background: rgba(35, 95, 134, 0.07);
+      color: var(--ink);
+      text-align: left;
+    }
+
+    .concept-shell {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .concept-hero {
+      padding: 1rem 1.15rem;
+      border-radius: 22px;
+      background: linear-gradient(135deg, rgba(35,95,134,0.12), rgba(109,142,84,0.11));
+      border: 1px solid rgba(35, 95, 134, 0.12);
+    }
+
+    .concept-hero p {
+      color: var(--ink);
+      font-size: clamp(0.96rem, 1.4vw, 1.14rem);
+    }
+
+    .section-card {
+      display: grid;
+      gap: 0.6rem;
+    }
+
+    .interpret-sections {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .formula-card {
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      background: rgba(35, 95, 134, 0.08);
+      border: 1px solid rgba(35, 95, 134, 0.12);
+      text-align: center;
+    }
+
+    .formula-card code {
+      font-size: clamp(0.98rem, 1.6vw, 1.3rem);
+      color: var(--accent);
+    }
+
+    .prompt-shell {
+      padding: 0.95rem 1rem;
+      border-radius: 18px;
+      background: rgba(247, 243, 238, 0.96);
+      border: 1px solid rgba(183, 112, 57, 0.12);
+      text-align: left;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .prediction-stack {
+      display: grid;
+      gap: 0.65rem;
+      text-align: left;
+    }
+
+    .prediction-row {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.85rem;
+      align-items: start;
+      padding: 0.85rem 0.95rem;
+      border-radius: 18px;
+      background: rgba(247, 243, 238, 0.96);
+      border: 1px solid rgba(183, 112, 57, 0.12);
+    }
+
+    .prediction-dot {
+      width: 0.72rem;
+      height: 0.72rem;
+      border-radius: 50%;
+      margin-top: 0.34rem;
+      background: var(--accent-warm);
+    }
+
+    .bullet-list,
+    .compact-list,
+    .note-list,
+    .nested-list {
+      margin: 0;
+      padding-left: 1.1rem;
+      display: grid;
+      gap: 0.38rem;
+      text-align: left;
+    }
+
+    .compact-list {
+      gap: 0.28rem;
+    }
+
+    .nested-list {
+      margin-top: 0.28rem;
+      padding-left: 1rem;
+      gap: 0.2rem;
+    }
+
+    .bullet-list li::marker,
+    .compact-list li::marker,
+    .note-list li::marker,
+    .nested-list li::marker {
+      color: var(--accent);
+    }
+
+    .deck-chrome {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.75rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(31, 39, 48, 0.08);
+      box-shadow: 0 18px 48px rgba(30, 39, 49, 0.14);
+      backdrop-filter: blur(12px);
+    }
+
+    .progress-track {
+      width: clamp(90px, 12vw, 160px);
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(31, 39, 48, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-warm));
+      transition: width 220ms ease;
+    }
+
+    .notes-panel {
+      position: fixed;
+      left: 1rem;
+      bottom: 1rem;
+      z-index: 25;
+      width: min(420px, calc(100vw - 2rem));
+      max-height: min(55vh, 460px);
+      overflow: auto;
+      padding: 1rem 1rem 1.1rem;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(31, 39, 48, 0.08);
+      box-shadow: 0 24px 70px rgba(30, 39, 49, 0.14);
+      transform: translateY(calc(100% + 1rem));
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 220ms ease, opacity 200ms ease;
+    }
+
+    .notes-panel.is-open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .notes-panel h2 {
+      margin: 0 0 0.7rem;
+      font-family: "Fraunces", serif;
+      font-size: 1.4rem;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 420ms ease, transform 420ms ease;
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      :root {
+        --stage-width: min(92vw, 760px);
+        --stage-height: min(86vh, 760px);
+      }
+
+      .goal-grid,
+      .card-grid,
+      .concept-grid,
+      .pair-grid,
+      .dataset-grid,
+      .section-grid,
+      .interpret-sections {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      :root {
+        --title-size: clamp(1.18rem, 5vw, 1.95rem);
+        --body-size: clamp(0.74rem, 2.5vw, 0.88rem);
+        --small-size: clamp(0.55rem, 1.9vw, 0.72rem);
+      }
+
+      .slide {
+        padding: 0.6rem;
+      }
+
+      .slide-shell {
+        padding: 0.82rem;
+      }
+
+      .goal-grid,
+      .card-grid,
+      .concept-grid,
+      .pair-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mini-card,
+      .dataset-card,
+      .section-card,
+      .prediction-row {
+        padding: 0.78rem;
+      }
+
+      .deck-chrome {
+        left: 0.7rem;
+        right: 0.7rem;
+        justify-content: space-between;
+      }
+    }
+
+    @media (max-width: 430px) {
+      :root {
+        --title-size: clamp(1rem, 5.1vw, 1.45rem);
+        --body-size: clamp(0.66rem, 2.85vw, 0.79rem);
+        --small-size: clamp(0.5rem, 2vw, 0.62rem);
+      }
+
+      .slide {
+        padding: 0.38rem;
+      }
+
+      .slide-shell {
+        padding: 0.62rem;
+      }
+
+      .stage {
+        gap: 0.4rem;
+      }
+
+      .goal-grid,
+      .card-grid,
+      .concept-grid,
+      .pair-grid,
+      .dataset-grid,
+      .section-grid {
+        gap: 0.42rem;
+      }
+
+      .mini-card,
+      .dataset-card,
+      .section-card,
+      .prediction-row,
+      .prompt-shell,
+      .formula-card,
+      .concept-hero {
+        padding: 0.58rem;
+        border-radius: 14px;
+      }
+    }
+
+    @media (max-height: 500px) {
+      :root {
+        --title-size: clamp(0.98rem, 3vw, 1.45rem);
+        --body-size: clamp(0.6rem, 1.16vw, 0.76rem);
+        --small-size: clamp(0.48rem, 0.95vw, 0.6rem);
+        --stage-width: min(92vw, 1120px);
+        --stage-height: min(92vh, 520px);
+      }
+
+      .slide {
+        padding: 0.34rem;
+      }
+
+      .slide-shell {
+        padding: 0.52rem;
+      }
+
+      .stage {
+        gap: 0.32rem;
+      }
+
+      .goal-grid,
+      .card-grid,
+      .concept-grid,
+      .pair-grid,
+      .dataset-grid,
+      .section-grid,
+      .interpret-sections {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.4rem;
+      }
+
+      .mini-card,
+      .dataset-card,
+      .section-card,
+      .prediction-row,
+      .prompt-shell,
+      .formula-card,
+      .concept-hero {
+        padding: 0.5rem 0.56rem;
+        border-radius: 12px;
+      }
+
+      .deck-chrome span {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+
+    @page {
+      size: landscape;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        overflow: visible;
+        background: white;
+      }
+
+      body {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .slide {
+        break-after: page;
+        page-break-after: always;
+      }
+
+      .slide:last-child {
+        break-after: auto;
+        page-break-after: auto;
+      }
+
+      .deck-chrome,
+      .notes-panel {
+        display: none !important;
+      }
+
+      .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  
+            <section class="slide" id="slide-01" data-index="0">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage hero-stage">
+          <p class="eyebrow">Workshop deck</p>
+          <h1>What predicts lexical decision speed?</h1>
+          <p class="hero-lead">One real lexical decision dataset</p>
+          <div class="goal-grid"><article class="mini-card"><p>Regression as a tool for testing theory</p></article><article class="mini-card"><p>Useful practice for later assessment work</p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-02" data-index="1">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Recap</p>
+          <h1>Recap: Lexical Decision</h1>
+          <div class="card-grid"><article class="mini-card"><p>Participants decide whether a letter string is a <strong>word or nonword</strong></p></article><article class="mini-card"><p>Lower RT means <strong>faster</strong> recognition</p></article><article class="mini-card"><p>Common words are usually recognised more quickly</p></article><article class="mini-card"><p>Similar words can create lexical competition</p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p><strong>Speaker emphasis</strong></p><ul class="note-list"><li>Re-anchor students in the task before introducing the item-level dataset.</li><li>Keep the emphasis on lexical competition and RT as the key outcome variable.</li></ul></template>
+            </section>
+            
+            <section class="slide" id="slide-03" data-index="2">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Dataset</p>
+          <h1>Meet the dataset</h1>
+          <div class="card-grid"><article class="mini-card"><p>A prepared teaching version of a <strong>public lexical decision megastudy</strong></p></article><article class="mini-card"><p>Base source: <strong>English Lexicon Project</strong></p></article><article class="mini-card"><p>Each row is <strong>one English word</strong></p></article><article class="mini-card"><p>This is an <strong>item analysis of word-level means</strong></p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p><strong>Speaker emphasis</strong></p><ul class="note-list"><li>Stress that each row is a word-level mean, not an individual participant trial.</li><li>Flag the English Lexicon Project provenance so students trust the data source.</li></ul></template>
+            </section>
+            
+            <section class="slide" id="slide-04" data-index="3">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage dataset-stage">
+          <p class="eyebrow">Variables</p>
+          <h1>What the core variables mean</h1>
+          <div class="dataset-grid"><article class="dataset-card"><h3>word</h3><p>the lexical item</p></article><article class="dataset-card"><h3>length</h3><p>number of letters</p></article><article class="dataset-card"><h3>log_frequency</h3><p>how common the word is (<strong>higher = more frequent</strong>)</p></article><article class="dataset-card"><h3>AoA</h3><p>estimated age at which the word is learned (<strong>higher = learned later</strong>)</p></article><article class="dataset-card"><h3>OLD20</h3><p>a measure of orthographic neighbourhood similarity (<strong>lower = more similar neighbours</strong>)</p></article><article class="dataset-card"><h3>mean_RT_ms</h3><p>average lexical decision response time</p></article></div>
+          <div class="dataset-footer"></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-05" data-index="4">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage concept-stage">
+          <p class="eyebrow">Key predictor</p>
+          <h1>AoA</h1>
+          <div class="concept-shell">
+            <div class="concept-hero">
+              <p><strong>AoA</strong> stands for <strong>Age of Acquisition</strong></p>
+            </div>
+            <div class="concept-grid"><article class="mini-card"><p>Estimated age when a word is learned</p></article><article class="mini-card"><p><strong>Lower AoA</strong> = learned earlier; <strong>higher AoA</strong> = learned later</p></article><article class="mini-card"><p>Earlier-acquired words are often recognised faster <em>(e.g. Morrison &amp; Ellis, 2000)</em></p></article><article class="mini-card"><p>AoA can matter even after controlling for frequency</p></article></div>
+          </div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-06" data-index="5">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage concept-stage">
+          <p class="eyebrow">Key predictor</p>
+          <h1>OLD20</h1>
+          <div class="concept-shell">
+            <div class="concept-hero">
+              <p><strong>OLD20</strong> is a measure of how similar a word is to other words in spelling</p>
+            </div>
+            <div class="concept-grid"><article class="mini-card"><p>Based on the word’s <strong>20 closest spelling neighbours</strong></p></article><article class="mini-card"><p><strong>Lower OLD20</strong> = more similar neighbours; <strong>higher OLD20</strong> = more distinct</p></article><article class="mini-card"><p>Similar-looking words may increase lexical competition</p></article><article class="mini-card"><p>More graded than a simple neighbour count</p></article></div>
+          </div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-07" data-index="6">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage split-stage">
+          <p class="eyebrow">Explore first</p>
+          <h1>First look at the data</h1>
+          <div class="section-grid">
+            
+        <article class="section-card">
+          <h3>Descriptives: individual variables</h3>
+          <ul class="compact-list"><li><span>Record summary statistics for <strong>mean_RT_ms</strong>, <strong>length</strong>, <strong>log_frequency</strong>, <strong>AoA</strong>, and <strong>OLD20</strong></span></li><li><span>What do the distributions look like?</span></li><li><span>Are there missing values or implausible values?</span></li></ul>
+        </article>
+        
+        <article class="section-card">
+          <h3>Relationships: variables together</h3>
+          <ul class="compact-list"><li><span>Create scatterplots for key pairs of variables</span></li><li><span>Start with <strong>mean_RT_ms</strong> against <strong>log_frequency</strong></span></li><li><span>Then look at relations between predictors</span></li><li><span>Are there obvious trends, clusters, or outliers?</span></li></ul>
+        </article>
+        
+          </div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p><strong>Speaker emphasis</strong></p><ul class="note-list"><li>Pause on descriptives before any modelling.</li><li>Use scatterplots to preview both RT relations and predictor overlap.</li></ul></template>
+            </section>
+            
+            <section class="slide" id="slide-08" data-index="7">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Regression</p>
+          <h1>Regression recap 1: what regression does</h1>
+          <div class="card-grid"><article class="mini-card"><p>Regression tests whether one variable predicts another</p></article><article class="mini-card"><p>It links a <strong>dependent variable</strong> to one or more <strong>predictors</strong></p></article><article class="mini-card"><p>It tells us about <strong>direction</strong>, <strong>size</strong>, and <strong>uncertainty</strong></p></article><article class="mini-card"><p>It moves us beyond simple description</p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-09" data-index="8">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Why multiple regression</p>
+          <h1>Regression recap 2: why multiple regression helps</h1>
+          <div class="card-grid"><article class="mini-card"><p>Multiple regression includes several predictors in the same model</p></article><article class="mini-card"><p>It shows whether each predictor explains <strong>unique</strong> variation</p></article><article class="mini-card"><p>Coefficients are interpreted <strong>holding other predictors constant</strong></p></article><article class="mini-card"><p>This matters when predictors overlap</p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-10" data-index="9">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage model-stage">
+          <p class="eyebrow">Predictor overlap</p>
+          <h1>One simple relation between predictors</h1>
+          <div class="formula-card"><code>log_frequency ~ AoA</code></div>
+          <div class="card-grid"><article class="mini-card"><p>Start with one predictor-predictor relation</p></article><article class="mini-card"><p><strong><code>log_frequency</code> with <code>AoA</code></strong></p></article></div>
+          <div class="prompt-shell">
+            <h3>Questions:</h3>
+            <ul class="compact-list"><li><span>Are earlier-acquired words also more frequent?</span><ul class="nested-list"><li>Why does that matter in a multiple regression?</li></ul></li></ul>
+          </div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-11" data-index="10">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+    <section class="stage centered-stage">
+      <p class="eyebrow">Workshop</p>
+      <h1>Building the models (stepwise)</h1>
+      <ul class="bullet-list"><li><span>We&#x27;ll build predictive models incrementally:</span></li><li><span>| Model | Formula |</span></li><li><span>| --- | --- |</span></li><li><span>| Model 1 | <code>mean_RT_ms ~ log_frequency</code> |</span></li><li><span>| Model 2 | <code>mean_RT_ms ~ log_frequency + length</code> |</span></li><li><span>| Model 3 | <code>mean_RT_ms ~ log_frequency + length + AoA</code> |</span></li><li><span>| Model 4 | <code>mean_RT_ms ~ log_frequency + length + AoA + OLD20</code> |</span></li></ul>
+    </section>
+    
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-12" data-index="11">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Prediction prompt</p>
+          <h1>Now make your predictions</h1>
+          <div class="prediction-stack">
+            <article class="prediction-row"><span class="prediction-dot"></span><p>Predict the direction of each relation with RT</p></article><article class="prediction-row"><span class="prediction-dot"></span><p>Higher <strong>log_frequency</strong> should predict...?</p></article><article class="prediction-row"><span class="prediction-dot"></span><p>Higher <strong>AoA</strong> should predict...?</p></article><article class="prediction-row"><span class="prediction-dot"></span><p>Greater <strong>length</strong> should predict...?</p></article><article class="prediction-row"><span class="prediction-dot"></span><p>Higher <strong>OLD20</strong> should predict...?</p></article><article class="prediction-row"><span class="prediction-dot"></span><p>Which predictors do you expect to remain once they are entered together?</p></article>
+          </div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-13" data-index="12">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage model-stage">
+          <p class="eyebrow">Core model</p>
+          <h1>Do these predictors explain unique RT variation?</h1>
+          <div class="formula-card"><code>mean_RT_ms ~ length + log_frequency + AoA + OLD20</code></div>
+          <div class="pair-grid">
+            <article class="mini-card highlight-card"><p><strong>Dependent variable</strong>: <code>mean_RT_ms</code></p></article>
+            <article class="mini-card highlight-card"><p><strong>Predictors</strong>: <code>length</code>, <code>log_frequency</code>, <code>AoA</code>, <code>OLD20</code></p></article>
+          </div>
+          <div class="prompt-shell">
+            <h3>Ask:</h3>
+            <ul class="compact-list"><li><span>Does the model explain RT variation?</span><ul class="nested-list"><li>Which predictors show unique associations?</li></ul></li></ul>
+          </div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p><strong>Speaker emphasis</strong></p><ul class="note-list"><li>Make the dependent variable and predictor set explicit before any software steps.</li><li>Frame the question as unique association, not causality.</li></ul></template>
+            </section>
+            
+            <section class="slide" id="slide-14" data-index="13">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage split-stage">
+          <p class="eyebrow">Interpretation</p>
+          <h1>Turning coefficients into claims</h1>
+          <div class="section-grid interpret-sections">
+            <article class="section-card">
+              <h3>For each predictor, note:</h3>
+              <ul class="compact-list"><li><span>coefficient sign</span><ul class="nested-list"><li>confidence interval or p value</li><li>plain-language interpretation</li></ul></li></ul>
+            </article>
+            <article class="section-card">
+              <h3>Ask:</h3>
+              <ul class="compact-list"><li><span>Do frequency and AoA both matter once the other predictors are included?</span></li></ul>
+            </article>
+            <article class="section-card">
+              <h3>Better than “Which is strongest?”:</h3>
+              <ul class="compact-list"><li><span>Which predictors show the clearest unique association?</span></li></ul>
+            </article>
+            <article class="section-card">
+              <h3>Strength comparisons</h3>
+              <p>If comparing relative strength, use <strong>standardised estimates</strong> only</p>
+            </article>
+          </div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p><strong>Speaker emphasis</strong></p><ul class="note-list"><li>Push students from coefficient tables to plain-language claims.</li><li>Only mention relative strength if using standardised estimates.</li></ul></template>
+            </section>
+            
+            <section class="slide" id="slide-15" data-index="14">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Limitations</p>
+          <h1>Common limitations of an item analysis</h1>
+          <div class="card-grid"><article class="mini-card"><p><strong>Word-level means</strong> only</p></article><article class="mini-card"><p>Predictor overlap</p></article><article class="mini-card"><p>Correlational, not causal</p></article><article class="mini-card"><p>Hidden heterogeneity and <strong>speed-accuracy trade-offs</strong></p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p><strong>Speaker emphasis</strong></p><ul class="note-list"><li>End the analytic section by naming scope limits clearly.</li><li>Connect limitations to cautious interpretation rather than undermining the workshop.</li></ul></template>
+            </section>
+            
+            <section class="slide" id="slide-16" data-index="15">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Written response</p>
+          <h1>What should your written response include?</h1>
+          <div class="card-grid"><article class="mini-card"><p>Key regression results</p></article><article class="mini-card"><p>Which hypotheses are supported</p></article><article class="mini-card"><p>A short plain-language interpretation</p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+            <section class="slide" id="slide-17" data-index="16">
+              <div class="grain"></div>
+              <div class="slide-shell">
+                
+        <section class="stage centered-stage">
+          <p class="eyebrow">Payoff</p>
+          <h1>What is the payoff?</h1>
+          <div class="card-grid"><article class="mini-card"><p>Lexical decision RT is shaped by lexical properties</p></article><article class="mini-card"><p>Regression helps us ask whether predictors make <strong>unique</strong> contributions</p></article><article class="mini-card"><p>These predictors tell us something about the structure of the mental lexicon</p></article></div>
+        </section>
+        
+              </div>
+              <template class="notes-template"><p>No speaker notes for this slide.</p></template>
+            </section>
+            
+
+  <div class="deck-chrome" aria-live="polite">
+    <strong id="chrome-title">Slide 1</strong>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <span>N for notes</span>
+  </div>
+
+  <aside class="notes-panel" id="notes-panel" aria-hidden="true">
+    <h2>Speaker notes</h2>
+    <div id="notes-content"></div>
+  </aside>
+
+  <script>
+    const slideMeta = [{"number": 1, "title": "What predicts lexical decision speed?"}, {"number": 2, "title": "Recap: Lexical Decision"}, {"number": 3, "title": "Meet the dataset"}, {"number": 4, "title": "What the core variables mean"}, {"number": 5, "title": "AoA"}, {"number": 6, "title": "OLD20"}, {"number": 7, "title": "First look at the data"}, {"number": 8, "title": "Regression recap 1: what regression does"}, {"number": 9, "title": "Regression recap 2: why multiple regression helps"}, {"number": 10, "title": "One simple relation between predictors"}, {"number": 11, "title": "Building the models (stepwise)"}, {"number": 12, "title": "Now make your predictions"}, {"number": 13, "title": "Do these predictors explain unique RT variation?"}, {"number": 14, "title": "Turning coefficients into claims"}, {"number": 15, "title": "Common limitations of an item analysis"}, {"number": 16, "title": "What should your written response include?"}, {"number": 17, "title": "What is the payoff?"}];
+
+    class PresentationController {
+      constructor() {
+        this.slides = [...document.querySelectorAll(".slide")];
+        this.currentIndex = 0;
+        this.lastWheel = 0;
+        this.touchStartY = null;
+        this.notesOpen = false;
+        this.chromeTitle = document.getElementById("chrome-title");
+        this.progressFill = document.getElementById("progress-fill");
+        this.notesPanel = document.getElementById("notes-panel");
+        this.notesContent = document.getElementById("notes-content");
+        this.bindEvents();
+        this.observeSlides();
+        this.updateUI(0);
+        this.jumpToHash();
+      }
+
+      bindEvents() {
+        window.addEventListener("keydown", (event) => this.onKeyDown(event));
+        window.addEventListener("wheel", (event) => this.onWheel(event), { passive: false });
+        window.addEventListener("touchstart", (event) => this.onTouchStart(event), { passive: true });
+        window.addEventListener("touchend", (event) => this.onTouchEnd(event), { passive: true });
+      }
+
+      observeSlides() {
+        const slideObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              const index = Number(entry.target.dataset.index);
+              this.currentIndex = index;
+              this.updateUI(index);
+              entry.target.querySelectorAll(".stage, .mini-card, .dataset-card, .section-card, .prediction-row, .concept-hero, .prompt-shell, .formula-card").forEach((node) => {
+                node.classList.add("reveal", "in-view");
+              });
+            }
+          });
+        }, { threshold: 0.6 });
+
+        this.slides.forEach((slide) => slideObserver.observe(slide));
+      }
+
+      onKeyDown(event) {
+        if (["ArrowDown", "PageDown", " "].includes(event.key)) {
+          event.preventDefault();
+          this.goTo(this.currentIndex + 1);
+          return;
+        }
+        if (["ArrowUp", "PageUp"].includes(event.key)) {
+          event.preventDefault();
+          this.goTo(this.currentIndex - 1);
+          return;
+        }
+        if (event.key.toLowerCase() === "n") {
+          event.preventDefault();
+          this.toggleNotes();
+        }
+      }
+
+      onWheel(event) {
+        const now = Date.now();
+        if (Math.abs(event.deltaY) < 20 || now - this.lastWheel < 700) return;
+        event.preventDefault();
+        this.lastWheel = now;
+        this.goTo(this.currentIndex + (event.deltaY > 0 ? 1 : -1));
+      }
+
+      onTouchStart(event) {
+        this.touchStartY = event.changedTouches[0].clientY;
+      }
+
+      onTouchEnd(event) {
+        if (this.touchStartY === null) return;
+        const deltaY = this.touchStartY - event.changedTouches[0].clientY;
+        if (Math.abs(deltaY) > 50) {
+          this.goTo(this.currentIndex + (deltaY > 0 ? 1 : -1));
+        }
+        this.touchStartY = null;
+      }
+
+      goTo(index) {
+        const clamped = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides[clamped].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      updateUI(index) {
+        const meta = slideMeta[index];
+        this.chromeTitle.textContent = `Slide ${meta.number}: ${meta.title}`;
+        this.progressFill.style.width = `${((index + 1) / this.slides.length) * 100}%`;
+        if (this.notesOpen) this.renderNotes(index);
+      }
+
+      toggleNotes() {
+        this.notesOpen = !this.notesOpen;
+        this.notesPanel.classList.toggle("is-open", this.notesOpen);
+        this.notesPanel.setAttribute("aria-hidden", String(!this.notesOpen));
+        if (this.notesOpen) this.renderNotes(this.currentIndex);
+      }
+
+      renderNotes(index) {
+        const template = this.slides[index].querySelector(".notes-template");
+        this.notesContent.innerHTML = template ? template.innerHTML : "<p>No notes.</p>";
+      }
+
+      jumpToHash() {
+        if (!window.location.hash) return;
+        const target = document.querySelector(window.location.hash);
+        if (!target) return;
+        window.requestAnimationFrame(() => {
+          target.scrollIntoView({ behavior: "auto", block: "start" });
+          window.requestAnimationFrame(() => {
+            target.scrollIntoView({ behavior: "auto", block: "start" });
+          });
+        });
+      }
+    }
+
+    new PresentationController();
+  </script>
+</body>
+</html>
