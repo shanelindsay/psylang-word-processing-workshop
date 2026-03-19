@@ -24,4 +24,4 @@ Student download pack for the Psychology of Language word-processing workshop.
   - Workshop slide deck in PDF format
 
 - `slides/L6_word_processing_workshop_frontend.html`
-  - HTML export of the workshop slides
+  - HTML versions of dynamic presentation
